@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "SubscriptionProcessorChart.fullname" . }}
+  labels:
+    {{- include "SubscriptionProcessorChart.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "SubscriptionProcessorChart.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "SubscriptionProcessorChart.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health/liveness
+              port: http
+          env:
+          - name: ServiceBusConfiguration__SbMinimumAllowedBackoffTime
+            value: {{ .Values.ServiceBusConfiguration.MinimumAllowedBackoffTime | quote}}
+          - name: ServiceBusConfiguration__SbMaximumAllowedBackoffTime
+            value: {{ .Values.ServiceBusConfiguration.MaximumAllowedBackoffTime | quote}}
+          - name: ServiceBusConfiguration__SbMaximumAllowedRetries
+            value: {{ .Values.ServiceBusConfiguration.MaximumAllowedRetries | quote}}
+          - name: ServiceBusConfiguration__SbMinimumAllowedGracePeriod
+            value: {{ .Values.ServiceBusConfiguration.MinimumAllowedGracePeriod | quote}}
+          - name: ServiceBusConfiguration__DefaultGracePeriodInSeconds
+            value: {{ .Values.ServiceBusConfiguration.DefaultGracePeriodInSeconds | quote}}
+          - name: ServiceBusConfiguration__ConnectionString
+            value: {{ .Values.ServiceBusConfiguration.ConnectionString | quote}}
+          - name: ServiceBusConfiguration__EntityPath
+            value: {{ .Values.ServiceBusConfiguration.EntityPath | quote}}
+          - name: ServiceBusConfiguration__Namespace
+            value: {{ .Values.ServiceBusConfiguration.Namespace | quote}}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
