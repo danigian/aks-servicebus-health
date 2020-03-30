@@ -1,4 +1,4 @@
-![Docker Image CI](https://github.com/danigian/aks-servicebus-health/workflows/Docker%20Image%20CI/badge.svg)
+![Building and pushing Docker Image](https://github.com/danigian/aks-servicebus-health/workflows/Building%20and%20pushing%20Docker%20Image/badge.svg)
 
 # Kubernetes and Health Probes for Service Bus based application
 
