@@ -17,7 +17,7 @@ The repository contains the following folders:
 
 - **.github**: containing the GitHub Actions definition for building and pushing the Docker image of the sample application
 - **deploy**: containing the Helm template for deploying the application on your Kubernetes Cluster
-- **src**: containing the source
+- **src**: containing the source files for the application and some Unit Tests
 
 ## Getting started
 
@@ -107,6 +107,10 @@ In this application implementation, whenever an exception gets raised, it will b
 If multiple non transient exceptions get thrown, there must be something definitely wrong and Kubernetes should kill the pod as soon as possible.
 
 If transient exceptions get thrown, we should try to understand if the application recovered in the grace period or not. Therefore, at its startup, the SubscriptionMonitor calculates how many exceptions will be thrown, as a maximum, given the number of possible retries in the defined grace period.
+
+    WARNING: 
+    
+    The logic of this sample solution is depending on the specific implementation of the RetryExponential retry policy. If that changes in the future, the code may break and stop working as expected.
 
 ### Alternative options 
 
