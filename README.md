@@ -108,6 +108,10 @@ If multiple non transient exceptions get thrown, there must be something definit
 
 If transient exceptions get thrown, we should try to understand if the application recovered in the grace period or not. Therefore, at its startup, the SubscriptionMonitor calculates how many exceptions will be thrown, as a maximum, given the number of possible retries in the defined grace period.
 
+    WARNING: 
+    
+    The logic of this sample solution is depending on the specific implementation of the RetryExponential retry policy. If that changes in the future, the code may break and stop working as expected.
+
 ### Alternative options 
 
 Even if the suggested approach is working, other alternatives should be considered.
